@@ -24,9 +24,26 @@ public class Scenario {
 		bufferedWriter.write(this.replicationNo + "," + this.recoveryRate + "," + this.pooledFraction + "," + this.totalStockRatio + ","
 				+ this.sensitivityParameter + ",");
 		if(this.kpi.arrivalCount>0)
+			{
 			bufferedWriter.write((double)this.kpi.serviceSatisfiedCount / this.kpi.arrivalCount + ","
-				+ (double)this.kpi.serviceSatisfiedfromInventoryCount / this.kpi.arrivalCount);
-		bufferedWriter.write("\n");
+				+ (double)this.kpi.serviceSatisfiedfromInventoryCount / this.kpi.arrivalCount+",");
+			}
+		else
+		{
+			bufferedWriter.write(",,");
+		}
+		String printedDemand=this.kpi.demand.toString();
+		String printedSafety=this.kpi.safety.toString();
+		String printedPooled=this.kpi.pooled.toString();
+		
+		printedDemand=correct(printedDemand);
+		printedSafety=correct(printedSafety);
+		printedPooled=correct(printedPooled);
+		
+		bufferedWriter.write(this.kpi.shortageEnd+","+printedDemand+","+printedSafety+","+printedPooled+"\n");
+	}
 
+	private String correct(String cutBrackets) {
+		return cutBrackets.substring(1,cutBrackets.length()-1);		
 	}
 }

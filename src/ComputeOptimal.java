@@ -16,19 +16,19 @@ public class ComputeOptimal {
 			ArrayList<Double> A = new ArrayList<Double>();
 			ArrayList<Double> b = new ArrayList<Double>();
 	
-			double firstCoef = findCoef(hospital[0].annualDemandRate, recoveryRate);
+			double firstCoef = findCoef(hospital[0].getDemand(), recoveryRate);
 	
 			for (int i = 1; i < numberofHospitals; i++) {
 				A.add(firstCoef);
 				for (int j = 1; j < i; j++) {
 					A.add(0.0);
 				}
-				double secondCoef = findCoef(hospital[i].annualDemandRate, recoveryRate);
+				double secondCoef = findCoef(hospital[i].getDemand(), recoveryRate);
 				A.add(-secondCoef);
 				for (int j = i + 1; j < numberofHospitals; j++) {
 					A.add(0.0);
 				}
-				b.add(Math.log((hospital[i].annualDemandRate * secondCoef) / (hospital[0].annualDemandRate * firstCoef)));
+				b.add(Math.log((hospital[i].getDemand() * secondCoef) / (hospital[0].getDemand() * firstCoef)));
 			}
 			for (int i = 0; i < numberofHospitals; i++) {
 				A.add(1.0);
