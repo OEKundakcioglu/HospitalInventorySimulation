@@ -7,10 +7,10 @@ public class Scenario {
 	public double recoveryRate;
 	public double pooledFraction;
 	public double totalStockRatio;
-	public double sensitivityParameter;
+	public String sensitivityParameter;
 	public KPIs kpi;
 
-	public Scenario(int replicationNo, double recoveryRate, double pooledFraction, double totalStockRatio, double sensitivityParameter,
+	public Scenario(int replicationNo, double recoveryRate, double pooledFraction, double totalStockRatio, String sensitivityParameter,
 			KPIs kpi) {
 		this.replicationNo = replicationNo;
 		this.recoveryRate = recoveryRate;

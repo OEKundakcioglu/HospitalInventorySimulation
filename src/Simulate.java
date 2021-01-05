@@ -31,8 +31,6 @@ public class Simulate extends KPIs {
 		}
 
 		double shortageEnd = getNext(recoveryRate);
-		this.kpi.shortageEnd=shortageEnd;
-		// this.bufferedWriter.write("Shortage ends at "+shortageEnds+"\n");
 		
 		HashMap<Hospital, Double> arrivalTime = new HashMap<Hospital, Double>();
 
@@ -51,11 +49,29 @@ public class Simulate extends KPIs {
 			{
 				safetyUsed(thresholdLevel,firstArrivalHospital,kpi);
 			}
-			GenerateArrival(firstArrivalHospital, arrivalTime);
+			
+			// Alternative 1. All are generated once
+			// GenerateArrival(firstArrivalHospital, arrivalTime);
+			// Alternative 2. All are regenerated with the next arrival event to any hospital
+			// due to memoryless property, each hospital & shortage end is refreshed
+			shortageEnd = GenerateArrivalWithMemoryless(firstArrivalHospital, arrivalTime, shortageEnd,recoveryRate);
 			firstArrivalHospital = which(arrivalTime, shortageEnd);
 		}
+		this.kpi.shortageEnd=shortageEnd;
+		// this.bufferedWriter.write("Shortage ends at "+shortageEnds+"\n");
+		
 		// this.bufferedWriter.close();
 		
+	}
+
+	private double GenerateArrivalWithMemoryless(Hospital firstArrivalHospital, HashMap<Hospital, Double> arrivalTime, double shortageEnd, double recoveryRate) {
+		double thisTime = arrivalTime.get(firstArrivalHospital);
+		for(Hospital h:arrivalTime.keySet())
+		{
+			arrivalTime.put(h, thisTime+getNext(h.getDemand()));
+		}
+		// this.bufferedWriter.write("Expecting arrival at "+thisTime+" for hospital "+hospital.id+"\n");
+		return thisTime+getNext(recoveryRate);
 	}
 
 

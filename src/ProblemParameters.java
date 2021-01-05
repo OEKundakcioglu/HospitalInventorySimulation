@@ -18,6 +18,8 @@ public class ProblemParameters {
 	public double[] annualDemandRates = { 50, 60, 70, 150, 160, 170  };
 	public String outFile = "output5.csv";
 */	
+
+	
 	public double[] recoveryRates = { 1, 2, 3, 4, 5, 6 };
 
 	// inventory parameters to be plotted
@@ -26,5 +28,6 @@ public class ProblemParameters {
 
 	// sensitivity parameters to analyze deviation from optimal levels to transfer
 	// from pooled to reserved
-	public double[] sensitivityParameters = { -0.2, -0.1, 0.1, 0.2 };
+	public double[] poolSensitivityParameters = { 0.1, 0.2 };
+	public double[] thresholdSensitivityParameters = { 0.1, 0.2 };
 }
