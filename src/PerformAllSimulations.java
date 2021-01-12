@@ -88,7 +88,7 @@ public class PerformAllSimulations {
 										recoveryRate);
 								KPIs kpi = simulate.kpi;
 								scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio,
-										"pool " + sensitivityParameter, kpi));
+										"pool",sensitivityParameter, kpi));
 							}
 							alterBack(thresholds, pooledInventories, hmTransfer, StockType.POOL); // before the next
 																									// change, we take
@@ -101,7 +101,7 @@ public class PerformAllSimulations {
 										recoveryRate);
 								KPIs kpi = simulate.kpi;
 								scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio,
-										"safety " + sensitivityParameter, kpi));
+										"safety",sensitivityParameter, kpi));
 							}
 							alterBack(thresholds, pooledInventories, hmTransfer, StockType.SAFETY); // before the next
 																									// change, we take
@@ -110,7 +110,7 @@ public class PerformAllSimulations {
 						for (int r = 0; r < this.replication; r++) {
 							Simulate simulate = new Simulate(this.random, thresholds, pooledInventories, recoveryRate);
 							KPIs kpi = simulate.kpi;
-							scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio, "", kpi));
+							scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio, "base", 0, kpi));
 						}
 					}
 
@@ -164,15 +164,15 @@ public class PerformAllSimulations {
 	public void reportKPIs() throws IOException {
 		BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(this.outFile));
 		bufferedWriter.write(
-				"replicationNo, recoveryRate, pooledFraction, totalStockRatio, sensitivityParameter, Type I, Type II,	shortageEnd");
+				"replicationNo,recoveryRate,pooledFraction,totalStockRatio,sensitivityType,sensitivityParameter,Type I,Type II,shortageEnd");
 		for (int i = 0; i < hospital.length; i++) {
-			bufferedWriter.write(", demand " + (i + 1));
+			bufferedWriter.write(",demand " + (i + 1));
 		}
 		for (int i = 0; i < hospital.length; i++) {
-			bufferedWriter.write(", safety " + (i + 1));
+			bufferedWriter.write(",safety " + (i + 1));
 		}
 		for (int i = 0; i < hospital.length; i++) {
-			bufferedWriter.write(", pooled " + (i + 1));
+			bufferedWriter.write(",pooled " + (i + 1));
 		}
 		bufferedWriter.write("\n");
 		for (Scenario s : scenarios) {
