@@ -3,7 +3,7 @@ public class ProblemParameters {
 
 	// parameters for random generation
 	public int seedNumberforDemandGeneration = 1;
-	public int replication = 1000;
+	public int replication = 100;
 
 	// demand and recovery parameters
 

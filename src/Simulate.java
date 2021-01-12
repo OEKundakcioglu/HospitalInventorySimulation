@@ -15,18 +15,19 @@ public class Simulate extends KPIs {
 		// this.bufferedWriter = new BufferedWriter(new FileWriter("log.txt"));
 		this.kpi = new KPIs();
 		this.random=random;
-		// start with rounding to the nearest integer
+		// start with rounding to the integer values
+		// we do not use nearest integer as that might increase or increase the total inventory level
+		// we use roung method that allocates the floor values, and depending on the remaining fraction
+		// distributes the remainin quantity one by one in decreasing order of fractions
+		
 		int numberofHospitals = thresholds.keySet().size();
-		HashMap<Hospital, Integer> thresholdLevel = new HashMap<Hospital, Integer>();
-		HashMap<Hospital, Integer> pooledLevel = new HashMap<Hospital, Integer>();
-		for (Hospital h : thresholds.keySet()) {
-			int threshold=(int) Math.round(thresholds.get(h));
-			int pooled = (int) Math.round(pooledInventories.get(h));
-			thresholdLevel.put(h, threshold);
-			pooledLevel.put(h, pooled);
+		HashMap<Hospital, Integer> thresholdLevel = round(thresholds);
+		HashMap<Hospital,Integer> pooledLevel = round(pooledInventories);
+		for(Hospital h : thresholds.keySet())
+		{
 			this.kpi.demand.add(h.getDemand());
-			this.kpi.safety.add(threshold);
-			this.kpi.pooled.add(pooled);
+			this.kpi.safety.add(thresholdLevel.get(h));
+			this.kpi.pooled.add(pooledLevel.get(h));
 			// this.bufferedWriter.write("Hospital "+h.id+" pooled "+pooled+" safety "+threshold+"\n");
 		}
 
@@ -59,9 +60,48 @@ public class Simulate extends KPIs {
 		}
 		this.kpi.shortageEnd=shortageEnd;
 		// this.bufferedWriter.write("Shortage ends at "+shortageEnds+"\n");
-		
 		// this.bufferedWriter.close();
+	}
+
+	private HashMap<Hospital, Integer> round(HashMap<Hospital, Double> inventories) {
 		
+		HashMap<Hospital, Integer> level = new HashMap<Hospital, Integer>();
+		HashMap<Hospital, Double> levelFrac = new HashMap<Hospital, Double>();
+		
+		for (Hospital h : inventories.keySet()) {
+			double thisFraction =inventories.get(h);
+			int thisInt = (int) Math.floor(thisFraction);
+			level.put(h, thisInt);
+			levelFrac.put(h, thisFraction-thisInt);
+		}
+		double sumFraction=0;
+		for (Hospital h : inventories.keySet()) {
+			sumFraction=sumFraction+levelFrac.get(h);
+		}
+		int remainingFraction = (int) Math.round(sumFraction);
+		while(remainingFraction>0)
+		{
+			Hospital h = Maximum(levelFrac);
+			levelFrac.remove(h);
+			level.put(h,level.get(h)+1);
+			remainingFraction=remainingFraction-1;
+		}
+		return level;
+	}
+
+	private Hospital Maximum(HashMap<Hospital, Double> levelFrac) {
+		Hospital hosp=null;
+		double maxVal=0;
+		for (Hospital h : levelFrac.keySet())
+		{
+			double thisVal=levelFrac.get(h);
+			if (thisVal>maxVal)
+			{
+				maxVal=thisVal;
+				hosp=h;
+			}
+		}
+		return hosp;
 	}
 
 	private double GenerateArrivalWithMemoryless(Hospital firstArrivalHospital, HashMap<Hospital, Double> arrivalTime, double shortageEnd, double recoveryRate) {

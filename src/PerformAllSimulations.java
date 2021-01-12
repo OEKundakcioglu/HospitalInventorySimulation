@@ -60,7 +60,7 @@ public class PerformAllSimulations {
 	}
 
 	public void simulateOptimalLevels() throws IOException {
-		runGenericSimulator(new double[0], new double[0]);
+		runGenericSimulator(new double[0], new double[0]); // optimal and linear allocations are computed here
 	}
 
 	public void sensitivityAnalysis(double[] poolSensitivityParameters, double[] thresholdSensitivityParameters)
@@ -81,42 +81,50 @@ public class PerformAllSimulations {
 							this.hospital);
 					if (poolSensitivityParameters.length + thresholdSensitivityParameters.length > 0) {
 						for (double sensitivityParameter : poolSensitivityParameters) {
-							HashMap<Hospital, Double> hmTransfer = alter(thresholds, pooledInventories,
-									sensitivityParameter, StockType.POOL);
-							for (int r = 0; r < this.replication; r++) {
-								Simulate simulate = new Simulate(this.random, thresholds, pooledInventories,
-										recoveryRate);
-								KPIs kpi = simulate.kpi;
-								scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio,
-										"pool",sensitivityParameter, kpi));
-							}
-							alterBack(thresholds, pooledInventories, hmTransfer, StockType.POOL); // before the next
-																									// change, we take
+							alterSimulateAlterBack(thresholds, pooledInventories,
+									sensitivityParameter, StockType.POOL,recoveryRate,pooledFraction, totalStockRatio);
 						}
 						for (double sensitivityParameter : thresholdSensitivityParameters) {
-							HashMap<Hospital, Double> hmTransfer = alter(thresholds, pooledInventories,
-									sensitivityParameter, StockType.SAFETY);
-							for (int r = 0; r < this.replication; r++) {
-								Simulate simulate = new Simulate(this.random, thresholds, pooledInventories,
-										recoveryRate);
-								KPIs kpi = simulate.kpi;
-								scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio,
-										"safety",sensitivityParameter, kpi));
-							}
-							alterBack(thresholds, pooledInventories, hmTransfer, StockType.SAFETY); // before the next
-																									// change, we take
+							alterSimulateAlterBack(thresholds, pooledInventories,
+									sensitivityParameter, StockType.SAFETY,recoveryRate,pooledFraction, totalStockRatio);
 						}
 					} else {
+						//OPTIMAL DIST'N
 						for (int r = 0; r < this.replication; r++) {
 							Simulate simulate = new Simulate(this.random, thresholds, pooledInventories, recoveryRate);
 							KPIs kpi = simulate.kpi;
-							scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio, "base", 0, kpi));
+							scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio, "optimal", 0, kpi));
+						}
+						//LINEAR DIST'N
+						for (int r = 0; r < this.replication; r++) {
+							HashMap<Hospital, Double> thresholdsLin = ComputeLinear.levels(stocked - pooled, recoveryRate,
+									this.hospital);
+							HashMap<Hospital, Double> pooledInventoriesLin = ComputeLinear.levels(pooled, recoveryRate,
+									this.hospital);
+							Simulate simulate = new Simulate(this.random, thresholdsLin, pooledInventoriesLin, recoveryRate);
+							KPIs kpi = simulate.kpi;
+							scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio, "linear", 0, kpi));
 						}
 					}
 
 				}
 			}
 		}
+	}
+
+	private void alterSimulateAlterBack(HashMap<Hospital, Double> thresholds,
+			HashMap<Hospital, Double> pooledInventories, double sensitivityParameter, StockType st,
+			double recoveryRate, double pooledFraction, double totalStockRatio) throws IOException {
+		HashMap<Hospital, Double> hmTransfer = alter(thresholds, pooledInventories,
+				sensitivityParameter, st);
+		for (int r = 0; r < this.replication; r++) {
+			Simulate simulate = new Simulate(this.random, thresholds, pooledInventories,recoveryRate);
+			KPIs kpi = simulate.kpi;
+			this.scenarios.add(new Scenario(r + 1, recoveryRate, pooledFraction, totalStockRatio,
+					"pool",sensitivityParameter, kpi));
+		}
+		alterBack(thresholds, pooledInventories, hmTransfer, st); // before the next
+																	// change, we take it back!		
 	}
 
 	private void alterBack(HashMap<Hospital, Double> thresholds, HashMap<Hospital, Double> pooledInventories,
