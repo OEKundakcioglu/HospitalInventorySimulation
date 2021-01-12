@@ -7,8 +7,8 @@ public class ProblemParameters {
 
 	// demand and recovery parameters
 
-	public double[][] annualDemandRateAlternatives = { { 530, 210, 94 }, { 940, 380, 9 }, { 940, 380, 9 },
-			{ 5980, 440, 14 }, { 760, 430 }, { 50, 60, 70, 150, 160, 170 } };
+	public double[][] annualDemandRateAlternatives = { { 530, 210, 94 }, { 940, 380, 9 }, 
+			{ 5980, 440, 14 }, { 760, 430 }, { 50, 60, 70, 150, 160, 170 } , { 50, 60, 70, 350, 360, 370 } };
 	public double[] annualDemandRates;
 	public String outFilePre = "results/output";
 	public String outFile = "";
