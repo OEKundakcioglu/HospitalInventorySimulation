@@ -10,7 +10,7 @@ public class Launcher {
 			PerformAllSimulations simulation = new PerformAllSimulations(
 					problemParameters.seedNumberforDemandGeneration, problemParameters.replication, problemData,
 					problemParameters.fractionsofPooled, problemParameters.totalStockinAnnualDemand,
-					problemParameters.recoveryRates, problemParameters.outFile);
+					problemParameters.recoveryRates, problemParameters.outFile, problemParameters.epsilon);
 			simulation.simulateOptimalLevels();
 			simulation.sensitivityAnalysis(problemParameters.poolSensitivityParameters,
 					problemParameters.thresholdSensitivityParameters);
