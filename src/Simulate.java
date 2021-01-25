@@ -1,5 +1,3 @@
-// import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
@@ -8,17 +6,15 @@ public class Simulate extends KPIs {
 
 	public KPIs kpi;
 	private Random random;
-	// private BufferedWriter bufferedWriter;
 	
 	public Simulate(Random random, HashMap<Hospital, Double> thresholds, HashMap<Hospital, Double> pooledInventories,
 			double recoveryRate) throws IOException {
-		// this.bufferedWriter = new BufferedWriter(new FileWriter("log.txt"));
 		this.kpi = new KPIs();
 		this.random=random;
 		// start with rounding to the integer values
 		// we do not use nearest integer as that might increase or increase the total inventory level
-		// we use roung method that allocates the floor values, and depending on the remaining fraction
-		// distributes the remainin quantity one by one in decreasing order of fractions
+		// we use floor method that allocates the floor values, and depending on the remaining fraction
+		// distributes the remaining quantity one by one in decreasing order of fractions
 		
 		int numberofHospitals = thresholds.keySet().size();
 		HashMap<Hospital, Integer> thresholdLevel = round(thresholds);
@@ -28,7 +24,6 @@ public class Simulate extends KPIs {
 			this.kpi.demand.add(h.getDemand());
 			this.kpi.safety.add(thresholdLevel.get(h));
 			this.kpi.pooled.add(pooledLevel.get(h));
-			// this.bufferedWriter.write("Hospital "+h.id+" pooled "+pooled+" safety "+threshold+"\n");
 		}
 
 		double shortageEnd = getNext(recoveryRate);
@@ -44,7 +39,6 @@ public class Simulate extends KPIs {
 		}
 		Hospital firstArrivalHospital = which(arrivalTime, shortageEnd);
 		while (firstArrivalHospital != null) {
-			// this.bufferedWriter.write("Next arrival is at hospital "+firstArrivalHospital.id+" pooled " +pooledLevel.get(firstArrivalHospital)+" safety " +thresholdLevel.get(firstArrivalHospital)+"\n");
 			kpi.arrivalCount=kpi.arrivalCount+1;
 			if(!poolUsed(pooledLevel,firstArrivalHospital,kpi))
 			{
@@ -59,8 +53,6 @@ public class Simulate extends KPIs {
 			firstArrivalHospital = which(arrivalTime, shortageEnd);
 		}
 		this.kpi.shortageEnd=shortageEnd;
-		// this.bufferedWriter.write("Shortage ends at "+shortageEnds+"\n");
-		// this.bufferedWriter.close();
 	}
 
 	private HashMap<Hospital, Integer> round(HashMap<Hospital, Double> inventories) {
@@ -110,7 +102,6 @@ public class Simulate extends KPIs {
 		{
 			arrivalTime.put(h, thisTime+getNext(h.getDemand()));
 		}
-		// this.bufferedWriter.write("Expecting arrival at "+thisTime+" for hospital "+hospital.id+"\n");
 		return thisTime+getNext(recoveryRate);
 	}
 
@@ -136,7 +127,6 @@ public class Simulate extends KPIs {
 		double thisTime = arrivalTime.get(hospital);
 		thisTime += getNext(hospital.getDemand());
 		arrivalTime.put(hospital, thisTime);
-		// this.bufferedWriter.write("Expecting arrival at "+thisTime+" for hospital "+hospital.id+"\n");
 	}
 
 	private void safetyUsed(HashMap<Hospital, Integer> thresholdLevel, Hospital firstArrivalHospital, KPIs kpi) throws IOException {
@@ -146,7 +136,6 @@ public class Simulate extends KPIs {
 			kpi.serviceSatisfiedCount=kpi.serviceSatisfiedCount+1;
 			kpi.serviceSatisfiedfromInventoryCount=kpi.serviceSatisfiedfromInventoryCount+1;
 			thresholdLevel.put(firstArrivalHospital, stock-1);
-			// this.bufferedWriter.write("own safety used and now at "+ (stock-1)+"\n");
 		}
 	}
 
@@ -166,15 +155,13 @@ public class Simulate extends KPIs {
 			{
 				kpi.serviceSatisfiedfromInventoryCount=kpi.serviceSatisfiedfromInventoryCount+1;
 				pooledLevel.put(firstArrivalHospital, stock-1);
-				// this.bufferedWriter.write("own pool used and now at "+ (stock-1)+"\n");
 			}
 			else
 			{
-				//find some hospital!
+				// find some hospital
 				Hospital bestHosp = findAbundant(pooledLevel);
 				int bestStatusLevel = pooledLevel.get(bestHosp);
 				pooledLevel.put(bestHosp, bestStatusLevel-1);
-				// this.bufferedWriter.write("pool of "+ bestHosp.id +" used and now at "+ (bestStatusLevel-1)+"\n");
 			}
 		}
 		return used;

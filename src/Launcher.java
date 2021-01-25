@@ -4,8 +4,10 @@ public class Launcher {
 
 	public static void main(String[] args) throws IOException {
 
-		for (int i = 0; i < 6; i++) {
-			ProblemParameters problemParameters = new ProblemParameters(i);
+		ProblemParameters problemParameters = new ProblemParameters();
+		
+		for (int i = 0; i < problemParameters.annualDemandRateAlternatives.length; i++) {
+			problemParameters.setProblemParameters(i);
 			ProblemData problemData = new ProblemData(problemParameters.annualDemandRates);
 			PerformAllSimulations simulation = new PerformAllSimulations(
 					problemParameters.seedNumberforDemandGeneration, problemParameters.replication, problemData,

@@ -1,4 +1,3 @@
-
 public class Hospital {
 	public int id;
 	private double annualDemandRate;
