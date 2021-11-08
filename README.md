@@ -14,9 +14,9 @@ PerformAllSimulations: Performs all simulations and stores results
 
 Simulate: Performs each simulation
 
-ComputeOptimal: Static methods in this class computes optimal quantities using Efficient Java Matrix Library <http://ejml.org> for matrix operations
+ComputeOptimal: Static methods in this class compute optimal quantities using Efficient Java Matrix Library <http://ejml.org> for matrix operations
 
-ComputeLinear: Static methods in this class computes quantities linearly proportional to the demand
+ComputeLinear: Static methods in this class compute quantities linearly proportional to the demand
 
 Hospital: Stores hospital demand and id information
 
