@@ -1,4 +1,4 @@
-# HospitalInventorySimulation
+# Hospital Inventory Simulation Code
 Simulation of hospital demand, inventory sharing, with reported service levels as KPIs
 
 
